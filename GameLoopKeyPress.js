@@ -4,6 +4,8 @@
 
 import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
 
+let gameWon = false;
+
 // Scene
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x87ceeb);
@@ -23,21 +25,6 @@ camera.lookAt(0, 0, 0);
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
-
-const collisionMessage = document.createElement("div");
-collisionMessage.textContent = "Collision is happening!";
-collisionMessage.style.position = "fixed";
-collisionMessage.style.top = "24px";
-collisionMessage.style.left = "50%";
-collisionMessage.style.transform = "translateX(-50%)";
-collisionMessage.style.fontFamily = "sans-serif";
-collisionMessage.style.fontSize = "28px";
-collisionMessage.style.fontWeight = "bold";
-collisionMessage.style.color = "#ffffff";
-collisionMessage.style.textShadow = "2px 2px 4px #000000";
-collisionMessage.style.display = "none";
-collisionMessage.style.zIndex = "1";
-document.body.appendChild(collisionMessage);
 
 const timerMessage = document.createElement("div");
 timerMessage.style.position = "fixed";
@@ -152,8 +139,6 @@ const planeObjects = [
     )
 ];
 
-const targetObject = planeObjects[planeObjects.length - 1];
-
 function placeObjects(objects) {
     const objectPositions = [];
 
@@ -202,8 +187,6 @@ window.addEventListener("keyup", (event) => {
 const speed = 0.1;
 const playerBounds = new THREE.Box3();
 const objectBounds = new THREE.Box3();
-let collisionTime = 0;
-let targetFound = false;
 const gameStartTime = performance.now();
 const gameDuration = 20;
 
@@ -230,25 +213,7 @@ function updateTimer() {
 }
 
 function updateScoreMessage(score) {
-        scoreMessage.textContent = `Score: ${score}`;
-}
-
-function updateCollisionMessage(isColliding) {
-    if (targetFound) {
-        collisionMessage.textContent = "Congratulations! You win!";
-        collisionMessage.style.display = "block";
-        collisionMessage.style.color = "#22cc55";
-    } else if (isColliding) {
-        collisionMessage.textContent = "Collision is happening!";
-        collisionTime += 0.05;
-        collisionMessage.style.display = "block";
-        collisionMessage.style.color = `hsl(${(collisionTime * 180) % 360}, 100%, 50%)`;
-    } else {
-        collisionTime = 0;
-        collisionMessage.textContent = "Collision is happening!";
-        collisionMessage.style.display = "none";
-        collisionMessage.style.color = "#ffffff";
-    }
+        scoreMessage.textContent = `Score: ${score} / 10`;
 }
 
 function handleCollisions() {
@@ -267,58 +232,72 @@ function handleCollisions() {
             planeObjects.splice(i, 1);
             score += 1;
             updateScoreMessage(score);
+
+            //check for win
+            if (planeObjects.length == 0) {
+                gameWon = true;
+                timerMessage.textContent = "You Win!";
+                timerMessage.style.top = "50%";
+                timerMessage.style.right = "auto";
+                timerMessage.style.left = "50%";
+                timerMessage.style.transform = "translate(-50%, -50%)";
+                timerMessage.style.width = "100%";
+                timerMessage.style.textAlign = "center";
+                timerMessage.style.fontSize = "15vw";
+                timerMessage.style.color = "#00a843";
+            }
         } else {
             object.visible = true;
         }
     });
-
-    updateCollisionMessage(isColliding);
 }
 
 // Animation Loop
 function animate() {
+    if (!gameWon) {
 
-    requestAnimationFrame(animate);
+        requestAnimationFrame(animate);
 
-    updateTimer();
+        updateTimer();
 
-    // WASD Controls
-    if (keys["w"]) {
-        player.position.z -= speed;
+        // WASD Controls
+        if (keys["w"]) {
+            player.position.z -= speed;
+        }
+
+        if (keys["s"]) {
+            player.position.z += speed;
+        }
+
+        if (keys["a"]) {
+            player.position.x -= speed;
+        }
+
+        if (keys["d"]) {
+            player.position.x += speed;
+        }
+
+        // Arrow Key Controls
+        if (keys["arrowup"]) {
+            player.position.z -= speed;
+        }
+
+        if (keys["arrowdown"]) {
+            player.position.z += speed;
+        }
+
+        if (keys["arrowleft"]) {
+            player.position.x -= speed;
+        }
+
+        if (keys["arrowright"]) {
+            player.position.x += speed;
+        }
+
+        handleCollisions();
+
+        renderer.render(scene, camera);
     }
-
-    if (keys["s"]) {
-        player.position.z += speed;
-    }
-
-    if (keys["a"]) {
-        player.position.x -= speed;
-    }
-
-    if (keys["d"]) {
-        player.position.x += speed;
-    }
-
-    // Arrow Key Controls
-    if (keys["arrowup"]) {
-        player.position.z -= speed;
-    }
-
-    if (keys["arrowdown"]) {
-        player.position.z += speed;
-    }
-
-    if (keys["arrowleft"]) {
-        player.position.x -= speed;
-    }
-
-    if (keys["arrowright"]) {
-        player.position.x += speed;
-    }
-
-    handleCollisions();
-
-    renderer.render(scene, camera);
 }
 
 animate();
