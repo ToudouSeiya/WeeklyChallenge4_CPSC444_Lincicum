@@ -297,6 +297,8 @@ function animate() {
         handleCollisions();
 
         renderer.render(scene, camera);
+
+        planeObjects.forEach((object) => object.rotation.y += 0.02);
     }
 }
 
