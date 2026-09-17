@@ -1,3 +1,7 @@
+//Morgan Lincicum
+//CPSC444
+//Weekly Challenge 4
+
 import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
 
 // Scene
@@ -47,6 +51,21 @@ timerMessage.style.textShadow = "2px 2px 4px #000000";
 timerMessage.style.zIndex = "1";
 document.body.appendChild(timerMessage);
 
+const scoreMessage = document.createElement("div");
+scoreMessage.style.position = "fixed";
+scoreMessage.style.top = "24px";
+scoreMessage.style.left = "24px";
+scoreMessage.style.fontFamily = "sans-serif";
+scoreMessage.style.fontSize = "24px";
+scoreMessage.style.fontWeight = "bold";
+scoreMessage.style.color = "#ffffff";
+scoreMessage.style.textShadow = "2px 2px 4px #000000";
+scoreMessage.style.zIndex = "1";
+document.body.appendChild(scoreMessage);
+
+let score = 0;
+updateScoreMessage(score);
+
 // Ground Plane
 const planeGeometry = new THREE.PlaneGeometry(30, 30);
 const planeMaterial = new THREE.MeshStandardMaterial({
@@ -92,24 +111,24 @@ scene.add(player);
 
 const planeObjects = [
     new THREE.Mesh(
-        new THREE.SphereGeometry(1, 32, 16),
+        new THREE.BoxGeometry(1, 1, 1),
         new THREE.MeshStandardMaterial({ color: 0xff6600 })
     ),
     new THREE.Mesh(
-        new THREE.ConeGeometry(1, 2, 32),
-        new THREE.MeshStandardMaterial({ color: 0xff00aa })
+        new THREE.BoxGeometry(0.5, 0.5, 0.5),
+        new THREE.MeshStandardMaterial({ color: 0x000000 })
     ),
     new THREE.Mesh(
-        new THREE.CylinderGeometry(1, 1, 2, 32),
-        new THREE.MeshStandardMaterial({ color: 0xffff00 })
+        new THREE.BoxGeometry(0.25, 0.25, 0.25),
+        new THREE.MeshStandardMaterial({ color: 0xff9900 })
     ),
     new THREE.Mesh(
-        new THREE.TorusGeometry(1, 0.35, 16, 32),
-        new THREE.MeshStandardMaterial({ color: 0x00ffff })
+        new THREE.BoxGeometry(2, 2, 2),
+        new THREE.MeshStandardMaterial({ color: 0x66ff00 })
     ),
     new THREE.Mesh(
-        new THREE.IcosahedronGeometry(1.1, 0),
-        new THREE.MeshStandardMaterial({ color: 0x22cc55 })
+        new THREE.BoxGeometry(1.5, 1.5, 1.5),
+        new THREE.MeshStandardMaterial({ color: 0xff0000 })
     )
 ];
 
@@ -187,6 +206,10 @@ function updateTimer() {
     const elapsedSeconds = Math.floor((performance.now() - gameStartTime) / 1000);
     const secondsRemaining = Math.max(gameDuration - elapsedSeconds, 0);
     updateTimerMessage(secondsRemaining);
+}
+
+function updateScoreMessage(score) {
+        scoreMessage.textContent = `Score: ${score}`;
 }
 
 function updateCollisionMessage(isColliding) {
