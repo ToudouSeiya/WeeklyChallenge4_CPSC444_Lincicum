@@ -128,7 +128,27 @@ const planeObjects = [
     ),
     new THREE.Mesh(
         new THREE.BoxGeometry(1.5, 1.5, 1.5),
-        new THREE.MeshStandardMaterial({ color: 0xff0000 })
+        new THREE.MeshStandardMaterial({ color: 0xffff00 })
+    ),
+    new THREE.Mesh(
+        new THREE.BoxGeometry(1, 1, 1),
+        new THREE.MeshStandardMaterial({ color: 0xff00ff })
+    ),
+    new THREE.Mesh(
+        new THREE.BoxGeometry(0.5, 0.5, 0.5),
+        new THREE.MeshStandardMaterial({ color: 0x00ff00 })
+    ),
+    new THREE.Mesh(
+        new THREE.BoxGeometry(0.25, 0.25, 0.25),
+        new THREE.MeshStandardMaterial({ color: 0xdd8800 })
+    ),
+    new THREE.Mesh(
+        new THREE.BoxGeometry(2, 2, 2),
+        new THREE.MeshStandardMaterial({ color: 0x00ffff })
+    ),
+    new THREE.Mesh(
+        new THREE.BoxGeometry(1.5, 1.5, 1.5),
+        new THREE.MeshStandardMaterial({ color: 0xffffff })
     )
 ];
 
@@ -139,9 +159,9 @@ function placeObjects(objects) {
 
     while (objectPositions.length < objects.length) {
         const position = [
-            Math.random() * 12 - 6,
+            Math.random() * 20 - 10,
             1,
-            Math.random() * 12 - 6
+            Math.random() * 20 - 10
         ];
         const isFarEnoughFromPlayer = Math.hypot(position[0], position[2]) > 2.5;
         const isFarEnoughFromObjects = objectPositions.every((otherPosition) =>
@@ -235,27 +255,17 @@ function handleCollisions() {
     let isColliding = false;
 
     planeObjects.forEach((object) => {
-        if (object === targetObject) {
-            if (targetFound) {
-                return;
-            }
-
-            objectBounds.setFromObject(object);
-
-            if (playerBounds.intersectsBox(objectBounds)) {
-                targetFound = true;
-                object.visible = false;
-            }
-
-            return;
-        }
 
         objectBounds.setFromObject(object);
         const objectIsColliding = playerBounds.intersectsBox(objectBounds);
 
         if (objectIsColliding) {
             isColliding = true;
-            object.visible = Math.floor(performance.now() / 100) % 2 === 0;
+            scene.remove(object);
+            let i = planeObjects.indexOf(object);
+            planeObjects.splice(i, 1);
+            score += 1;
+            updateScoreMessage(score);
         } else {
             object.visible = true;
         }
