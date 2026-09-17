@@ -157,10 +157,11 @@ const targetObject = planeObjects[planeObjects.length - 1];
 function placeObjects(objects) {
     const objectPositions = [];
 
+    let i = 0;
     while (objectPositions.length < objects.length) {
         const position = [
             Math.random() * 20 - 10,
-            1,
+            planeObjects[i].geometry.parameters.height,
             Math.random() * 20 - 10
         ];
         const isFarEnoughFromPlayer = Math.hypot(position[0], position[2]) > 2.5;
