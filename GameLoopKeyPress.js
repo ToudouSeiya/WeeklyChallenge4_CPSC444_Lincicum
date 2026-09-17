@@ -4,7 +4,7 @@
 
 import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
 
-let gameWon = false;
+let gameOver = false;
 
 // Scene
 const scene = new THREE.Scene();
@@ -192,6 +192,7 @@ const gameDuration = 20;
 
 function updateTimerMessage(secondsRemaining) {
     if (secondsRemaining === 0) {
+        gameOver=true;
         timerMessage.textContent = "TIME'S UP!";
         timerMessage.style.top = "50%";
         timerMessage.style.right = "auto";
@@ -235,7 +236,7 @@ function handleCollisions() {
 
             //check for win
             if (planeObjects.length == 0) {
-                gameWon = true;
+                gameOver = true;
                 timerMessage.textContent = "You Win!";
                 timerMessage.style.top = "50%";
                 timerMessage.style.right = "auto";
@@ -254,7 +255,7 @@ function handleCollisions() {
 
 // Animation Loop
 function animate() {
-    if (!gameWon) {
+    if (!gameOver) {
 
         requestAnimationFrame(animate);
 
